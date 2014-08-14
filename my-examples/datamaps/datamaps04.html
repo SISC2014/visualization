@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mapping Condor Data</title>
+</head>
+
+<body>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="http://datamaps.github.io/scripts/datamaps.all.min.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+	<div id="container" style="position: relative; left: 50px; top: -200px; width: 1200px; height: 1000px;"></div>
+
+	<script>
+		
+		var map = new Datamap({
+ 			element: document.getElementById('container'),
+ 			scope: 'usa',
+ 			geographyConfig: {
+    			popupOnHover: false,
+        		highlightOnHover: false
+    		},
+			
+   			fills: {
+				defaultFill: 'green',
+				bubble: 'blue',
+			}							
+		});
+		
+		var datahandler = function(data) {
+			 
+         	function addradius(record) {
+             	record.radius = 5 * Math.log(record.walltime) / Math.log(10);
+             	return record;
+         	}
+		 
+		 	function addFillKey(record) {
+				record.fillKey = 'bubble';
+				return record;
+			}
+
+         	for (record in data) {
+			 	addradius(data[record]);
+			 	addFillKey(data[record]);				
+         	}
+ 
+         	map.bubbles(data, {
+             	popupTemplate: function (geo, data) { 
+                 	return ['<div class="hoverinfo">'+
+                     	'Job Location: ' +  data.site,
+                     	'<br/>CPU Time: ' +  data.walltime + ' hours',
+                     	'</div>'].join('');
+         		}    
+         	})
+	 	};
+		
+		jQuery.ajax({
+			url: 'http://web-dev.ci-connect.net/~erikhalperin/job-retrieval.wsgi?hours=48',
+			dataType: 'jsonp',
+			success: datahandler,
+		});
+
+
+	</script>		
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mapping Condor Data</title>
+</head>
+
+<body>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="http://datamaps.github.io/scripts/datamaps.all.min.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+	<div id="container" style="position: relative; width: 1200px; height: 1000px;"></div>
+
+	<script>
+		
+		var map = new Datamap({
+ 			element: document.getElementById('container'),
+ 			scope: 'usa',
+ 			geographyConfig: {
+    			popupOnHover: false,
+        		highlightOnHover: false
+    		},
+   			fills: {
+				defaultFill: 'green',
+				b: 'black',
+			}
+		});
+		
+		var datahandler = function(data) {
+			 
+         	function addradius(record) {
+             	record.radius = 5;
+             	return record;
+         	}
+		 
+		 	function addFillKey(record) {
+			 	record.fillKey = 'b';
+			 	return record;
+		 	}
+			
+			function changeBubbleLat(record) {
+				record.latitude = record.latitude - Math.random();
+				return record;
+			}
+			
+			function changeBubbleLong(record) {
+				record.longitude = record.longitude - Math.random();
+				return record;
+			}
+
+         	for (record in data) {
+			 	addradius(data[record]);
+			 	addFillKey(data[record]);
+				changeBubbleLat(data[record]);
+				changeBubbleLong(data[record]);
+				
+         	}
+ 
+         	map.bubbles(data, {
+             	popupTemplate: function (geo, data) { 
+                 	return ['<div class="hoverinfo">'+
+                     	'Job Location: ' +  data.site,
+                     	'<br/>Time to Complete: ' +  data.walltime + ' hours',
+                     	'</div>'].join('');
+         		}    
+         	})
+	 	};
+
+
+		jQuery.ajax({
+			url: 'http://web-dev.ci-connect.net/~erikhalperin/job-retrieval.wsgi?hours=48',
+			dataType: 'jsonp',
+			success: datahandler,
+		});
+
+
+	</script>
+		
+</body>
+
+</html>

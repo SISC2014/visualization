@@ -1,0 +1,103 @@
+<html> 
+
+<head>
+	<meta charset="utf-8">
+	<link href="../novus-nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+
+	<style>
+		body {
+  			overflow-y:scroll;
+		}
+
+		text {
+  		  	font: 12px sans-serif;
+		}
+
+		.mypiechart {
+  		  	width: 800px;
+  		  	border: 2px;
+		}
+	</style>
+
+	<script src="../novus-nvd3/lib/d3.v3.js"></script>
+	<script src="../novus-nvd3/nv.d3.js"></script>
+	<script src="../novus-nvd3/src/models/legend.js"></script>
+	<script src="../novus-nvd3/src/models/pie.js"></script>
+	<script src="../novus-nvd3/src/models/pieChart.js"></script>
+	<script src="../novus-nvd3/src/utils.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+
+	<script>
+
+		var datahandler = function(data) {
+		
+			nv.addGraph(function() {	
+		 	
+				var width = 500,
+		   			height = 500;
+
+    			var chart = nv.models.pieChart()
+       						chart.x(function(d) { return d.project })
+        					chart.y(function(d) { return d.jobs })
+        					chart.color(d3.scale.category10().range())
+        					chart.width(width)
+        					chart.height(height)
+							chart.showLabels(true);
+	
+				var selection = d3.select("#jobs")
+        						selection.datum(data[0].projects)
+        						selection.transition().duration(1200)
+       							selection.attr('width', width)
+        						selection.attr('height', height)
+        						selection.call(chart);
+
+    			chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+		
+				return chart;
+		
+			});
+		
+		};
+
+		function makeUrl() {
+			var hours = $('#hours').val();
+			var site = $('#site').val();
+			var url = "http://web-dev.ci-connect.net/~erikhalperin/site-map.wsgi?";
+				url += "hours=" + hours + ";";
+				url += "site=" + site;
+			return url;
+		};
+
+		function generateChart() {
+			jQuery.ajax({
+				url: makeUrl(),
+				dataType: 'jsonp',
+				success: datahandler,	
+			});
+		};
+
+	</script>
+</head>
+
+
+<body>
+	<body class='with-3d-shadow with-transitions'>
+
+		<h2>Total Number of Jobs Per Project</h2>	
+		<br/>
+		<label for="hours">Number of Hours:</label>
+		<input id="hours" width="10" value=""/>
+		<br/>
+		<label for="site">Job Site:</label>
+		<input id="site" width="10" value=""/>
+		<br/>
+		<p/>
+		<button onclick="generateChart();">Draw Chart</button>
+		<p/>
+		<svg id="jobs" class="mypiechart"></svg>
+		
+</body>
+
+</html>

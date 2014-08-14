@@ -1,10 +1,10 @@
 <!doctype>
-<link type="text/css" rel="stylesheet" href="../src/css/graph.css">
-<link type="text/css" rel="stylesheet" href="../src/css/legend.css">
-<link type="text/css" rel="stylesheet" href="css/extensions.css">
+<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/graph.css">
+<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/legend.css">
+<link type="text/css" rel="stylesheet" href="../../rickshaw-files/css/extensions.css">
 
-<script src="../vendor/d3.v3.js"></script>
-<script src="../rickshaw.min.js"></script>
+<script src="../../rickshaw-files/vendor/d3.v3.js"></script>
+<script src="../../rickshaw-files/rickshaw.min.js"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
@@ -18,7 +18,7 @@ var palette = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
 
 var wrapper = new Rickshaw.Graph.Ajax( {
 	element: document.getElementById("chart"),
-	dataURL: 'data/status.json',
+	dataURL: 'http://web-dev.ci-connect.net/~erikhalperin/site-map.wsgi?hours=24',
 	width: 960,
 	height: 500,
 	renderer: 'bar',
@@ -51,12 +51,8 @@ function transformData(d) {
 	} );
 
 	Rickshaw.Series.zeroFill(data);
-	
-
-	console.log(data)
 	return data;
 }
-
 
 </script>
 

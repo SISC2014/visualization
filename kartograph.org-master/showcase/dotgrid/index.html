@@ -1,0 +1,92 @@
+---
+layout: showcase
+title: Dot Grid Maps
+---
+
+<script type="text/javascript">
+
+	$(function() {
+		var map, 
+			scale, max_dot_size,
+			dep_data,
+			w = $('#map').parent().width();
+		
+		$.ajax({ 
+			url: 'departments.json', 
+			dataType: 'json',
+			success: function(data) {
+				dep_data = data;
+	
+				window.m = map = kartograph.map('#map', w, w);	
+				map.loadMap('france-departments.svg', function() {	
+					map.addLayer('departments', {
+						key: 'id'
+					});
+					updateMap();
+				});
+			}
+		});
+		
+		/*
+		 * update map colors
+		 */
+		function updateMap() {
+			
+			var 
+				scale_type = $('.scale.btn-primary').data('type'),
+				scale = kartograph.scale[scale_type](dep_data, 'density'),
+				max_dot_size = Number($('.scale.btn-primary').data('mds')),
+				dotsize = function(d) {
+					return 1+Math.sqrt(scale(d.density))*max_dot_size;
+				};
+			
+			map.dotgrid({
+				data: dep_data,
+				key: 'id',
+				gridsize: 11,
+				size: dotsize,
+				duration: 300,
+				style: function(d) {
+					return {
+						fill: '#804',
+						'fill-opacity': 1 - (dotsize(d) > 30 ? .4 : 0),
+						stroke: '#fff',
+						'stroke-width': .34
+					}
+				}
+			});
+		}
+		
+		
+		$('.btn.scale').click(function(event) {
+			$('.btn.scale').removeClass('btn-primary');
+			$(event.target).addClass('btn-primary');
+			updateMap();
+		});
+	});
+
+</script>
+
+<style>
+#map path { stroke-width: 0.3px; }
+</style>
+
+<div id="map"></div>
+
+
+<p>
+	In 1967, the French cartographer <a href="http://en.wikipedia.org/wiki/Jacques_Bertin">Jaques Bertin</a> suggested the use of graduated sizes in a regular pattern as alternative to <a href="/showcase/choropleth/">chroropleth maps</a>.
+</p>
+<p>
+	The map shows the population distribution across departments in France. The country is overlayed by a regular grid of circles of which each is sized according to the population density of the department the circle falls into.
+<p>
+	The most notable advantage is that one no longer need to choose between showing the quantity or density of a distribution, since the regular pattern shows both at the same time: You can compare the population density by looking at individual circles while still getting an impression of the total population for each department.
+</p>
+<h3>Dot radius scale</h3>
+<p>
+	<a class="scale btn btn-primary" data-type="linear" data-mds="60">Linear</a>
+	<a class="scale btn" data-type="quantile" data-mds="8">Quantiles</a>
+	<a class="scale btn" data-type="log" data-mds="10">Logarithmic</a>
+	
+</p>
+

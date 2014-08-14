@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mapping Condor Data</title>
+</head>
+
+<body>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="http://datamaps.github.io/scripts/datamaps.all.min.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+	<div id="container" style="position: relative; width: 1200px; height: 1000px;"></div>
+
+	<script>
+		
+		var map = new Datamap({
+ 			element: document.getElementById('container'),
+ 			scope: 'usa',
+ 			geographyConfig: {
+    			popupOnHover: false,
+        		highlightOnHover: false
+    		},
+			
+   			fills: {
+				defaultFill: 'green',
+				ice: 'blue',
+				alg: 'red',
+				pro: 'orange',
+				alg2: 'yellow',
+				sci: 'purple',
+				swift: 'red',
+				other: 'black',
+			}
+			
+				
+		});
+		
+		var datahandler = function(data) {
+			 
+         	function addradius(record) {
+             	record.radius = 5;
+             	return record;
+         	}
+		 
+		 	function addFillKey(record) {
+				if (record.project == 'IceCube') {
+					record.fillKey = 'ice';
+				}
+				
+				else if (record.project == 'AlGDock') {
+					record.fillKey = 'alg';
+				}
+				
+				else if (record.project == 'Proteomics') {
+					record.fillKey = 'pro';
+				}
+				
+				else if (record.project == 'AGLT2') {
+					record.fillKey = 'alg2';
+				}
+				
+				else if (record.project == 'scicomp-analytics') {
+					record.fillKey = 'sci';
+				}
+				
+				else if (record.project == 'Swift') {
+					record.fillKey = 'swift';
+				}
+				
+				else {
+					record.fillKey = 'other';
+				}
+				
+			 	return record;
+		 	}
+			
+			function changeBubbleLat(record) {
+				record.latitude = record.latitude - (Math.random()-0.3);
+				return record;
+			}
+			
+			function changeBubbleLong(record) {
+				record.longitude = record.longitude - (Math.random()-0.3);
+				return record;
+			}
+
+         	for (record in data) {
+			 	addradius(data[record]);
+			 	addFillKey(data[record]);
+				changeBubbleLat(data[record]);
+				changeBubbleLong(data[record]);
+				
+         	}
+ 
+         	map.bubbles(data, {
+             	popupTemplate: function (geo, data) { 
+                 	return ['<div class="hoverinfo">'+
+                     	'Job Location: ' +  data.site,
+                     	'<br/>CPU Time: ' +  data.walltime + ' hours',
+                     	'</div>'].join('');
+         		}    
+         	})
+	 	};
+		
+
+		jQuery.ajax({
+			url: 'http://web-dev.ci-connect.net/~erikhalperin/job-retrieval.wsgi?hours=48',
+			dataType: 'jsonp',
+			success: datahandler,
+		});
+
+
+	</script>
+		
+</body>
+
+</html>

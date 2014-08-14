@@ -1,0 +1,74 @@
+---
+layout: showcase
+title: USA Projection
+---
+
+<script type="text/javascript">
+
+    $(function() {
+
+        var map = kartograph.map('#map');
+
+        map.loadMap('usa.svg', function() {
+
+            map.addLayer('layer0', {
+                styles: {
+                    stroke: '#aaa',
+                    fill: '#f6f4f2'
+                },
+                mouseenter: function(d, path) {
+                    path.attr('fill', Math.random() < 0.5 ? '#c04' : '#04c');
+                },
+                mouseleave: function(d, path) {
+                    path.animate({ fill: '#f6f4f2' }, 1000);
+                }
+            });
+
+            var points_of_interest = [
+                { name: 'Juneau, AK', lat: 58.3, lon: -134.416667 },
+                { name: 'Honolulu, HI', lat: 21.3, lon: -157.816667 },
+                { name: 'San Francisco, CA', lat: 37.783333, lon: -122.416667 },
+            ];
+
+            map.addSymbols({
+                type: kartograph.LabeledBubble,
+                data: points_of_interest,
+                location: function(d) { return [d.lon, d.lat] },
+                title: function(d) { return d.name; },
+                radius: 3,
+                center: false,
+                attrs: { fill: 'black' },
+                labelattrs: { 'font-size': 11 },
+                buffer: true
+            });
+
+        }, { padding: 30 });
+    });
+
+</script>
+
+<div id="map"></div>
+
+<p style="text-align:right">(<a href="http://jsfiddle.net/vis4/d8m9A/" target="_blank">edit on JsFiddle</a>)</p>
+
+<p>This is the YAML configuration used to <a href="http://kartograph.org/docs/kartograph.py/#using-kartograph-py">create</a> the <a href="usa.svg">SVG map</a>. The shapefiles are taken from <a href="http://gadm.org/download">GADM</a> and <a href="http://www.naturalearthdata.com/downloads/10m-physical-vectors">Natural Earth</a>:</p>
+
+<pre><code class="yaml">proj:
+    id: laea-usa
+layers:
+    layer0:
+        src: 'shp/USA_adm1.shp'
+        attributes:
+            key: code
+            label: NAME_1
+        simplify: 1
+    lakes:
+        src: 'shp/ne_10m_lakes.shp'
+        subtract-from: 'layer0'
+        filter:
+            scalerank: 0
+export:
+    round: 0
+    width: 1000
+    crop: false
+</code></pre>

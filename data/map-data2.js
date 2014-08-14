@@ -1,0 +1,1 @@
+var jobData = [{"ProjectName": "IceCube", "ClusterId": "566229", "longitude": -87.602699999999999, "JobId": "566229.0", "latitude": 41.7804, "User": "dschultz", "StartTime": 1404851083, "WallTime": 117.0, "radius": 10}]

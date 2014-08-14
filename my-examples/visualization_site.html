@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+
+    <!-- Bootstrap -->
+    <link href="bootstrap-files/bootstrap.min.css" rel="stylesheet">
+	<link href="bootstrap-files/bootstrap-theme.min.css" rel="stylesheet">
+</head>
+
+<body>
+	  	  
+	<!-- Heading -->
+	<div class="page-header">
+		<center>
+		<h1 class="text-danger">Data Visualization</h1>
+		<div class="jumbotron">
+			<span class="text-primary">
+			<p class="lead">Mapping job and data information.</p>
+			</span>
+		</center>
+		</div>
+	</div>
+	
+	<!-- Navigation -->
+	<nav class="navbar navbar-inverse" role="navigation">
+	  <div class="container-fluid">
+		  
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="http://osgconnect.net/">OSG Connect</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="map.html">Map (Using Google)</a></li>
+			<li><a href="map2.html">Map (Using Datamaps)</a></li>
+	      </ul>
+	      
+	      <ul class="nav navbar-nav navbar-right">
+		      <form class="navbar-form navbar-right" role="search">
+		        <div class="form-group">
+		          <input type="text" class="form-control" placeholder="Search">
+		        </div>
+		        <button type="submit" class="btn btn-default">Submit</button>
+		      </form>
+			
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	
+	<!-- Content -->
+	<div class="list-group">
+   	  <a href="novus-nvd3/my-examples/nvd3_pie_wsgi.html" class="list-group-item">
+   		  <h4 class="text-primary">Pie Chart #1 (NVD3)</h4>
+   		  <p class="list-group-item-text">Plots the number of condor jobs running at a given timestamp.</p>
+	  </a>
+		  
+	  <a href="novus-nvd3/my-examples/nvd3_pie2_wsgi.html" class="list-group-item">
+		  <h4 class="text-primary">Pie Chart #2 (NVD3)</h4>
+		  <p class="list-group-item-text">Plots total time for all jobs at a given location to complete.</p>
+	  </a>
+			
+  	  <a href="novus-nvd3/my-examples/nvd3_practice_bar.html" class="list-group-item">
+  		  <h4 class="text-primary">Stacked Bar Chart #1 (NVD3)</h4>
+  		  <p class="list-group-item-text">Link to example Stacked Bar Chart.</p>
+	  </a>
+		  
+	  <a href="novus-nvd3/my-examples/nvd3_practice_bar-3.html" class="list-group-item">
+		  <h4 class="text-primary">Stacked/Grouped Bar Chart #2 (NVD3)</h4>
+		  <p class="list-group-item-text">Link to example Stacked Bar Chart. Able to switch between stacked and grouped display.</p>
+	  </a>
+	  
+	  <a href="rickshaw-files/my-examples/rickshaw_stacked-area-chart.html" class="list-group-item">
+		  <h4 class="text-primary">Stacked Area Chart (Rickshaw)</h4>
+		  <p class="list-group-item-text">Uses random real-time data. Template for recreating CycleServer.</p>
+	  </a>
+	  
+	</div>
+
+	
+	
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap-files/bootstrap.min.js"></script>
+
+</body>
+
+</html>
