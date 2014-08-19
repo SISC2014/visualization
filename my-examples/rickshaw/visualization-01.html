@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+
+    <!-- Bootstrap -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	
+	<!-- jQuery -->
+	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/plug-ins/725b2a2115b/integration/jqueryui/dataTables.jqueryui.css">
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	
+	<!-- Graph JS File -->
+	<script type="text/javascript" language="javascript" src="graph.js"></script>
+  </head>
+  
+  
+  <body>  	  
+	  <!-- Heading -->
+	  <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+	  <div class="container">
+	    <div class="navbar-header">
+	      <a href="http://osgconnect.net" class="navbar-brand">OSG Connect</a>
+	    </div>
+	    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+	      <ul class="nav navbar-nav">
+	        <li>
+	          <a href="#">Documentation</a>
+	        </li>
+	        <li>
+	          <a href="http://jira.mwt2.org">Issues</a>
+	        </li>
+	        <li>
+	          <a href="https://bitbucket.org/scicomp-analytics">Source</a>
+	        </li>
+	      </ul>
+	    </nav>
+	  </div>
+	</header>
+			
+	<div class="welcome">
+		<center>
+			<h2 class="text-danger">Distributed High Throughput Computing Visualization</h2>
+			<h3 class="text-primary">OSG Connect Completed Job History</h3>
+		</center>
+	</div>
+	</br>
+		
+	<!-- Content -->
+	<div class="container" align="center">
+		Sort graph by: <select class="dropdown">
+			<option selected>(Choose One)</option>
+			<option value="Site">Site</option>
+			<option value="User">User</option>
+			<option value="Project">Project</option>
+			</select> </br></br>
+		Sites: <select class="sites" disabled="disabled" id="idSiteSelect"></select> 
+		Users: <select class="users" disabled="disabled" id="idUserSelect"></select> 
+		Projects: <select class="projects" disabled="disabled" id="idProjectSelect"></select> 
+	</div>
+	
+	<div id="graphspace"></div>
+	
+  </body>
+  
+  
+</html>

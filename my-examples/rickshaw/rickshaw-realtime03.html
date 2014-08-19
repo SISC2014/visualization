@@ -1,0 +1,320 @@
+<!doctype html>
+<head>
+	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/graph.css">
+	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/detail.css">
+	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/legend.css">
+	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/css/extensions.css">
+
+	<!--<script src="../../rickshaw-files/vendor/d3.v3.js"></script>
+
+	 <script>
+	 	jQuery.noConflict();
+	 </script>
+-->
+		
+	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css">
+
+	<link rel="stylesheet" type="text/css" href=
+		"http://cdn.datatables.net/plug-ins/725b2a2115b/integration/jqueryui/dataTables.jqueryui.css">
+	
+
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+
+	<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<!--	
+	<script src="../../rickshaw-files/src/js/Rickshaw.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Class.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Compat.ClassList.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Renderer.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Renderer.Area.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Renderer.Line.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Renderer.Bar.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Renderer.ScatterPlot.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Renderer.Stack.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.RangeSlider.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.RangeSlider.Preview.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.HoverDetail.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Annotate.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Legend.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Axis.Time.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Behavior.Series.Toggle.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Behavior.Series.Order.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Behavior.Series.Highlight.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Smoother.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Fixtures.Time.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Fixtures.Time.Local.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Fixtures.Number.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Fixtures.RandomData.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Fixtures.Color.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Color.Palette.js"></script>
+	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Axis.Y.js"></script>
+
+	<script src="../../rickshaw-files/js/extensions.js"></script>
+-->
+
+	<script type="text/javascript" language="javascript" src=""></script>
+
+</head>
+<body>
+	 <script>
+	 
+	 function preload(){
+		 $.ajax("http://1-dot-waniotest.appspot.com/forR",
+		  crossDomain=true,
+		  jsonp="callback",
+		  dataType="jsonp",
+		  data={ preload : "all" }, 
+		  function(data) {
+		 		s=data.sites;
+		 		d=data.projects;
+		 		u=data.users;
+		 		for (i in s)	$("#idSiteSelect").append( '<option value="'+s[i]+'">' + s[i] + '</option>');
+		 		for (i in d)	$("#idProjectSelect").append( '<option value="'+d[i]+'">' + d[i] + '</option>');
+		 		for (i in u)	$("#idUserSelect").append( '<option value="'+u[i]+'">' + u[i] + '</option>');
+		 	});
+	 }
+	 
+	 function getData(){
+	 	
+	 }
+	 
+	 $(document).ready( function(){
+		 preload();
+	 	$('#idSiteSelect, #idUserSelect, #idProjectSelect').change(getData);
+	});
+	 </script>
+
+<div id="content">
+
+	<form id="side_panel">
+		<h1>Job Data Per Site</h1>
+		<section><div id="legend"></div></section>
+		<section>
+			<div id="renderer_form" class="toggler">
+				<input type="radio" name="renderer" id="area" value="area" checked>
+				<label for="area">area</label>
+				<input type="radio" name="renderer" id="bar" value="bar">
+				<label for="bar">bar</label>
+				<input type="radio" name="renderer" id="line" value="line">
+				<label for="line">line</label>
+				<input type="radio" name="renderer" id="scatter" value="scatterplot">
+				<label for="scatter">scatter</label>
+			</div>
+		</section>
+		<section>
+			<div id="offset_form">
+				<label for="stack">
+					<input type="radio" name="offset" id="stack" value="zero" checked>
+					<span>stack</span>
+				</label>
+				<label for="stream">
+					<input type="radio" name="offset" id="stream" value="wiggle">
+					<span>stream</span>
+				</label>
+				<label for="pct">
+					<input type="radio" name="offset" id="pct" value="expand">
+					<span>pct</span>
+				</label>
+				<label for="value">
+					<input type="radio" name="offset" id="value" value="value">
+					<span>value</span>
+				</label>
+			</div>
+			<div id="interpolation_form">
+				<label for="cardinal">
+					<input type="radio" name="interpolation" id="cardinal" value="cardinal" checked>
+					<span>cardinal</span>
+				</label>
+				<label for="linear">
+					<input type="radio" name="interpolation" id="linear" value="linear">
+					<span>linear</span>
+				</label>
+				<label for="step">
+					<input type="radio" name="interpolation" id="step" value="step-after">
+					<span>step</span>
+				</label>
+			</div>
+		</section>
+		<section>
+			<h6>Smoothing</h6>
+			<div id="smoother"></div>
+		</section>
+		<section></section>
+	</form>
+
+	<div id="chart_container">
+		
+		Sites:<select id="idSiteSelect"> </select> 
+				
+						Users:<select id="idUserSelect"></select> 
+						Projects:<select id="idProjectSelect"></select> 
+						Group by:<select>
+						<option selected>site</option>
+						<option>user</option>
+						<option>project</option>
+						</select>
+		
+		<div id="chart"></div>
+		<div id="timeline"></div>
+		<div id="preview"></div>
+	</div>
+
+</div>
+
+<script>
+
+
+// var datahandler = function(d) {
+//
+// 	var palette = new Rickshaw.Color.Palette( { scheme: 'classic9' } );
+//
+// 	/*********************************************************************/
+//
+// 	var current_date = new Date();
+// 	var current_ms = current_date.getTime();
+// 	console.log(current_ms);
+//
+// 	var time_base = Math.floor( (current_ms / 3600) - 48);
+// 	console.log(time_base);
+//
+// 	/*********************************************************************/
+//
+// 	var data = [];
+//
+// 	for (var i=0; i<5; i++) {
+// 		var da = [];
+// 		for (var j=0; j<5; j++) {
+// 			da.push( {x: j, y: d[i].user } );
+// 		};
+// 		da.sort(function(a,b) { return a.x - b.x } );
+// 		data.push(da);
+// 	};
+//
+// 	/*********************************************************************/
+//
+// 	var graph = new Rickshaw.Graph( {
+// 		element: document.getElementById("chart"),
+// 		width: 900,
+// 		height: 500,
+// 		renderer: 'area',
+// 		stroke: true,
+// 		preserve: true,
+// 		series: [
+// 		{
+// 			color: palette.color(),
+// 			data: data[0],
+// 			name: d[0].site
+// 		}, {
+// 			color: palette.color(),
+// 			data: data[1],
+// 			name: d[1].site
+// 		}, {
+// 			color: palette.color(),
+// 			data: data[2],
+// 			name: d[2].site
+// 		}, {
+// 			color: palette.color(),
+// 			data: data[3],
+// 			name: d[3].site
+// 		}, {
+// 			color: palette.color(),
+// 			data: data[4],
+// 			name: d[4].site
+// 		}, {
+// 			color: palette.color(),
+// 			data: data[5],
+// 			name: d[5].site
+// 		}
+// 		]
+//
+// 	} );
+//
+// 	graph.render();
+//
+// 	/*********************************************************************/
+//
+// 	var preview = new Rickshaw.Graph.RangeSlider( {
+// 		graph: graph,
+// 		element: document.getElementById('preview'),
+// 	} );
+//
+// 	var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+// 		graph: graph,
+// 		xFormatter: function(x) {
+// 			return new Date(x * 1000).toString();
+// 		}
+// 	} );
+//
+// 	var annotator = new Rickshaw.Graph.Annotate( {
+// 		graph: graph,
+// 		element: document.getElementById('timeline')
+// 	} );
+//
+// 	var legend = new Rickshaw.Graph.Legend( {
+// 		graph: graph,
+// 		element: document.getElementById('legend')
+//
+// 	} );
+//
+// 	var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+// 		graph: graph,
+// 		legend: legend
+// 	} );
+//
+// 	var order = new Rickshaw.Graph.Behavior.Series.Order( {
+// 		graph: graph,
+// 		legend: legend
+// 	} );
+//
+// 	var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight( {
+// 		graph: graph,
+// 		legend: legend
+// 	} );
+//
+// 	var smoother = new Rickshaw.Graph.Smoother( {
+// 		graph: graph,
+// 		element: document.querySelector('#smoother')
+// 	} );
+//
+// 	var ticksTreatment = 'glow';
+//
+// 	var xAxis = new Rickshaw.Graph.Axis.X( {
+// 		graph: graph,
+// 		ticksTreatment: ticksTreatment,
+// 		timeFixture: Rickshaw.Fixtures.Number.formatKBMT,
+// 	} );
+//
+// 	xAxis.render();
+//
+// 	var yAxis = new Rickshaw.Graph.Axis.Y( {
+// 		graph: graph,
+// 		orientation: 'left',
+// 		tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+// 	} );
+//
+// 	yAxis.render();
+//
+// 	var controls = new RenderControls( {
+// 		element: document.querySelector('form'),
+// 		graph: graph
+// 	} );
+	
+//};
+
+
+/*********************************************************************/
+//
+//
+// jQuery.ajax({
+// 	url: 'http://web-dev.ci-connect.net/~erikhalperin/job-retrieval.wsgi?hours=48',
+// 	dataType: 'jsonp',
+// 	success: datahandler,
+// });
+
+
+</script>
+
+</body>
