@@ -99,7 +99,7 @@ $(document).ready( function() {
 	    }
 	    else if ($(this).val().match("User")) {
 			$('#idSiteSelect, #idProjectSelect').removeAttr('disabled');
-			$('#idUserSelect').attr('disabled', 'disabled').prop('selectedIndex',0);
+			$('#idUserSelect').attr('disabled', 'disabled').prop('selectedIndex',0); 
 	    }
 		else if ($(this).val().match("Project")) {
 			$('#idUserSelect, #idSiteSelect').removeAttr('disabled');
