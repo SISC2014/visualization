@@ -1,3 +1,12 @@
+var spinner = $("#spinner").spinner({
+	spin: function(event, ui) {
+	    if(ui.value < 0) {
+		$(this).spinner("value", 0);
+		return false;
+	    }
+	}
+    });
+
 
 // makes call to wsgi, which returns array of all sites, users, projects 
 // on success, calls fillMenu
@@ -11,15 +20,25 @@ function preload() {
 
 // fills in dropdown menu with data from ajax call in preload() function
 var fillMenu = function(data) {
-	// global var to access array later
+	// assigns data to global var 'choices'
 	window.choices = data;
 	
+	// remove @login01... string
+	var u = [];
+	for (i in data.users) {
+		var str = data.users[i];
+		str = str.replace('@login01.osgconnect.net',"") 
+		u.push(str);
+	};
+	
 	s=data.sites;
- 	p=data.projects;
- 	u=data.users;
+ 	p=data.projects;	
+	
+	// add 'ALL' option to each dropdown menu
 	s.splice(0, 0, "ALL");
 	p.splice(0, 0, "ALL");
 	u.splice(0, 0, "ALL");
+	
  	for (i in s)	$("#idSiteSelect").append( '<option value="'+ s[i] +'">' + s[i] + '</option>');
  	for (i in p)	$("#idProjectSelect").append( '<option value="'+ p[i] +'">' + p[i] + '</option>');
  	for (i in u)	$("#idUserSelect").append( '<option value="'+ u[i] +'">' + u[i] + '</option>');
@@ -28,33 +47,42 @@ var fillMenu = function(data) {
 // makes call to second wsgi, with selected user, site, project (or all)
 // on success, calls showData 
 function getData() {
-	// console.log($('#idUserSelect').val());
-	// console.log($('#idProjectSelect').val());
+
 	function makeURL() {
+		
 		var url = 'http://web-dev.ci-connect.net/~erikhalperin/JobAnalysis/data-entries.wsgi?';
 		if ($('#idUserSelect').val() == 'ALL') {
-			url += ';project=' + $('#idProjectSelect').val();
+			url += 'project=' + $('#idProjectSelect').val();
 		}
 		else if ($('#idProjectSelect').val() == 'ALL') {
-			url += 'user=' + $('#idUserSelect').val();
+			url += 'user=' + $('#idUserSelect').val() + '@login01.osgconnect.net';
 		}
 		else if ($('#idUserSelect').val() == 'ALL' && $('#idProjectSelect').val() == 'ALL') {
 			url += ';hours=100;bin=10;';
 			return url;
 		}
 		else {	
-			url += 'user=' + $('#idUserSelect').val();
+			url += 'user=' + $('#idUserSelect').val() + '@login01.osgconnect.net';
 			url += ';project=' + $('#idProjectSelect').val();
 		}
-		url += ';hours=100;bin=10;';
+		if ($('#spinner').val() == "") {
+			url += ';hours=100';
+			url += ';bin=10;';
+			return url;
+		}
+		
+		url += ';hours=' + $('#spinner').val();
+		url += ';bin=10;';
 		return url;
 	}
+	
+
 	$.ajax({
 		url: makeURL(),
-		// data: { user: $('#idUserSelect').val(), project: $('#idProjectSelect').val() },
 	 	dataType: 'jsonp',
 	 	success: showData
 	});
+	
 
 }
 
@@ -62,16 +90,17 @@ function getData() {
 // creates chart
 var showData = function(data) {
 
-	// makes x-axis values array
+	// makes x-axis values array of unique timestamps
 	var cs = [];
 	for (i in data) {
-		cs.push(data[i][3]);
+		var t = data[i][3];
+		if (cs.indexOf(t)==-1) {
+			cs.push(t);
+		}
 	}
+	cs.sort(function(a,b){return a-b});
 
-	//cs.sort(function(a, b) {return a-b} );
-	
 	// convert Unix timestamp to local time
-	var convert = [];
 	var options = {
 		weekday: "short",
 		month: "short",
@@ -81,12 +110,13 @@ var showData = function(data) {
 		hour12: true,
 	}
 	
+	var convert = [];
 	for (i in cs) {
 		var date = new Date(cs[i] * 1000);
-		// date.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'});
 		date.toLocaleTimeString("en-us", options);
 		convert.push(date);
 	}
+	console.log(convert);
 	
  	// chart options
 	var options = {
@@ -94,7 +124,14 @@ var showData = function(data) {
     				renderTo : 'graphspace', zoomType : 'xy',
     				type : 'area', height : 600, margin : [ 60, 30, 45, 70 ],
 					marginBottom: 180,
-    			},			
+    			},	
+				noData: {
+				    	style: {
+				        	fontWeight: 'bold',
+				            fontSize: '15px',
+				           	color: '#303030'
+				        }
+				},		
     			plotOptions: { 
 					area: {
                 		stacking: 'normal',
@@ -117,22 +154,23 @@ var showData = function(data) {
 					type : 'datetime', 
 					tickWidth : 0, 
 					gridLineWidth : 1, 
-					title : { text : 'Timestamp (GMT Time)' } 
+					title : { text : 'Timestamp' } 
 				},	
     			yAxis : { 
 					title : { text : 'Number of Jobs' },
-					labels: { formatter: function () { return this.value / 5; } } 
+					labels: { formatter: function () { return this.value / 5 ; } } 
 				},	
     			legend : { align: 'center', verticalAlign: 'bottom', floating: true, itemMarginBottom: 5},
     			exporting: { buttons: { contextButton: {  text: 'Export' } }, sourceHeight: 1050, sourceWidth: 1485 },
     			credits: { enabled: false }
     	};
-		
+
 		// creates array of unique sites
 		var S = [];
 		for (i in data) {
 			var n = data[i][2];
-			var k = choices.sites[n];
+			// n+1 bc want to make sure 'ALL' is not included
+			var k = choices.sites[n+1];
 			if (S.indexOf(k)==-1) {
 				S.push(k);
 			}		
@@ -150,7 +188,7 @@ var showData = function(data) {
 			TS.push(TSa);
 		}
 	
-		// creates data series from array
+		// creates data series from arrays
 		var sd = [];
 		for (i in S) {
 			sd.push({ 'name': S[i], 'data': TS[i] })
@@ -161,7 +199,6 @@ var showData = function(data) {
 		// create chart
    		chart = new Highcharts.Chart(options);
 }
-
 
 
 // once page is ready, calls functions, enables/disables dropdown menu depending on selections
@@ -184,6 +221,6 @@ $(document).ready( function() {
 			$('#idProjectSelect, #idUserSelect, #idSiteSelect').attr('disabled', 'disabled').prop('selectedIndex',0);
 		}
 	});
-	$('#idUserSelect, #idProjectSelect').change(getData);
+	//$('#idUserSelect, #idProjectSelect').change(getData);
 });
 	

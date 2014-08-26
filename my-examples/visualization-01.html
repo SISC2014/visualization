@@ -2,15 +2,8 @@
 <html lang="en">
 
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>Data Visualization</title>
-
-    <!-- Bootstrap -->
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	
 	<!-- jQuery -->
 	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css">
@@ -19,20 +12,25 @@
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	
 	<!-- Graph JS File -->
-	<script type="text/javascript" language="javascript" src="graph2.js"></script>
+	<script type="text/javascript" language="javascript" src="graph3.js"></script>
 	
+	<!-- Highcharts File -->
 	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/no-data-to-display.js"></script>
 	
-	<script type="text/javascript" language="javascript" src="http://momentjs.com/downloads/moment.js"></script>
-	
-	
-	<!--<link rel="stylesheet" type="text/css" href="visualization.css"> -->
+	<!-- CSS Files -->
+	<link rel="stylesheet" type="text/css" href="visualization.css"> 
 	
   </head>
   
   
-  <body>  	  
+  <body class="container">
+	  											
 	  <!-- Heading -->
 	  <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
 	  <div class="container">
@@ -41,9 +39,6 @@
 	    </div>
 	    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 	      <ul class="nav navbar-nav">
-	        <li>
-	          <a href="#">Documentation</a>
-	        </li>
 	        <li>
 	          <a href="http://jira.mwt2.org">Issues</a>
 	        </li>
@@ -65,21 +60,32 @@
 		
 	<!-- Content -->
 	<div class="container" align="center">
-		Sort graph by: <select class="dropdown">
+		
+		<strong> Sort graph by:
+		<select class="dropdown">
 			<option selected>(Choose One)</option>
 			<option value="Site">Site</option>
 			<option value="User">User</option>
 			<option value="Project">Project</option>
 			</select> </br></br>
-		Sites: <select class="sites" disabled="disabled" id="idSiteSelect"></select> 
-		Users: <select class="users" disabled="disabled" id="idUserSelect"></select> 
-		Projects: <select class="projects" disabled="disabled" id="idProjectSelect"></select> 
+		Sites:
+			<select class="sites" disabled="disabled" id="idSiteSelect"></select> 
+		Users:
+			<select class="users" disabled="disabled" id="idUserSelect"></select> 
+		Projects:
+			<select class="projects" disabled="disabled" id="idProjectSelect"></select> 
+		</br></br>
+      	Select a timeframe: </strong>
+      		<input id="spinner" name="value" value="100"> 
+     		<button id="go" onclick="getData()">Draw Graph</button>
+		
 	</div>
 	
-	<!--<div class="modal"></div>-->
 	<div id="graphspace"></div>
 	
+    <!-- Bootstrap -->
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	
   </body>
-  
   
 </html>

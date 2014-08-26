@@ -128,7 +128,7 @@ var datahandler = function(d) {
 		for (var j=0; j<5; j++) {
 			da.push( {x: d[i].projects[j].jobs, y: Math.random() * 1000 } );
 		};
-		da.sort(function(a,b) { return a.x - b.x } );
+		da.sort();
 		data.push(da);
 	};
 	
