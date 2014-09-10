@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Data Visualization</title>
+	
+	<!-- jQuery -->
+	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/plug-ins/725b2a2115b/integration/jqueryui/dataTables.jqueryui.css">
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	
+	<!-- Bootstrap Themes -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	
+	<!-- Graph JS File -->
+	<script type="text/javascript" language="javascript" src="graph3.js"></script>
+	
+	<!-- Highcharts File -->
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/no-data-to-display.js"></script>
+	
+	<!-- CSS Files -->
+	<link rel="stylesheet" type="text/css" href="visualization.css"> 
+	
+  </head>
+  
+  
+  <body class="container">
+	  											
+	 <!-- Heading -->
+	 <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+	    <div class="navbar-header">
+			<br>
+	     	<a class="logo"><img height="25px" src="osg.svg" alt="Open Science Grid"></a>
+	  	</div>
+	 </header>
+			
+	<div class="welcome">
+		<h3 align="center" class="text-primary">OSG Connect Completed Job History</h3>
+	</div>
+	<br>
+		
+	<!-- Content -->
+	<div align="center">
+		
+		<strong> Sort graph by:
+		<select class="dropdown">
+			<option selected>(Choose One)</option>
+			<option value="Site">Site</option>
+			<option value="User">User</option>
+			<option value="Project">Project</option>
+		</select> 
+		 || 
+		Sites:
+			<select class="sites" disabled="disabled" id="idSiteSelect"></select> 
+		Users:
+			<select class="users" disabled="disabled" id="idUserSelect"></select> 
+		Projects:
+			<select class="projects" disabled="disabled" id="idProjectSelect"></select> 
+		</br></br>
+      	Select a timeframe: </strong>
+      		<input id="spinner" style="width: 90px;" name="value" value="100"> hours     
+     		<button id="go" onclick="getData()">Draw Graph</button>
+		
+	</div>
+	
+	<div id="graphspace"></div>
+	
+    <!-- Bootstrap -->
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	
+  </body>
+  
+</html>

@@ -7,7 +7,7 @@
 	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/graph.css">
 	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/detail.css">
 	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/src/css/legend.css">
-	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/css/extensions.css">
+	<link type="text/css" rel="stylesheet" href="../../rickshaw-files/examples/css/extensions.css">
 	<script src="../../rickshaw-files/vendor/d3.v3.js"></script>
 	<script src="../../rickshaw-files/src/js/Rickshaw.js"></script>
 	<script src="../../rickshaw-files/src/js/Rickshaw.Class.js"></script>
@@ -36,7 +36,7 @@
 	<script src="../../rickshaw-files/src/js/Rickshaw.Fixtures.Color.js"></script>
 	<script src="../../rickshaw-files/src/js/Rickshaw.Color.Palette.js"></script>
 	<script src="../../rickshaw-files/src/js/Rickshaw.Graph.Axis.Y.js"></script>
-	<script src="../../rickshaw-files/js/extensions.js"></script>
+	<script src="../../rickshaw-files/examples/js/extensions.js"></script>
 
 	<!-- jQuery -->
 	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css">
@@ -44,15 +44,18 @@
 	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<link type="text/css" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css">
-	
+
+	<!-- Graph File -->
+	<script type="text/javascript" language="javascript" src="graph6.js"></script>
 
 </head>
+
 <body>
 
 <div id="content">
 
 	<form id="side_panel">
-		<h1>Job Data Per Site (MWT2)</h1>
+		<h1>Random Data in the Future</h1>
 		<section><div id="legend"></div></section>
 		<section>
 			<div id="renderer_form" class="toggler">
@@ -116,130 +119,7 @@
 </div>
 
 <script>
-
-
-var datahandler = function(d) {
-	
-	var palette = new Rickshaw.Color.Palette( { scheme: 'classic9' } );
-
-	var data = [];
-
-	for (var i=0; i<6; i++) {
-		var da = [];
-		for (var j=0; j<5; j++) {
-			da.push( {x: d[i].projects[j].jobs, y: Math.random() * 1000 } );
-		};
-		da.sort();
-		data.push(da);
-	};
-	
-	console.log(data)
-	
-	var arr = [];
-	
-	for (var i=0; i<6; i++) {
-		arr.push({color: palette.color(), name: d[i].site, data: data[i]});
-	};
-	
-	console.log(arr);
-	
-	var graph = new Rickshaw.Graph( {
-		element: document.getElementById("chart"),
-		width: 900,
-		height: 500,
-		renderer: 'area',
-		stroke: true,
-		preserve: true,
-		series: arr
-			
-	} );	
-	
-	graph.render();
-
-	var preview = new Rickshaw.Graph.RangeSlider( {
-		graph: graph,
-		element: document.getElementById('preview'),
-	} );
-
-	var hoverDetail = new Rickshaw.Graph.HoverDetail( {
-		graph: graph,
-		xFormatter: function(x) {
-			return new Date(x * 1000).toString();
-		}
-	} );
-
-	var annotator = new Rickshaw.Graph.Annotate( {
-		graph: graph,
-		element: document.getElementById('timeline')
-	} );
-
-	var legend = new Rickshaw.Graph.Legend( {
-		graph: graph,
-		element: document.getElementById('legend')
-
-	} );
-
-	var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
-		graph: graph,
-		legend: legend
-	} );
-
-	var order = new Rickshaw.Graph.Behavior.Series.Order( {
-		graph: graph,
-		legend: legend
-	} );
-
-	var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight( {
-		graph: graph,
-		legend: legend
-	} );
-
-	var smoother = new Rickshaw.Graph.Smoother( {
-		graph: graph,
-		element: document.querySelector('#smoother')
-	} );
-
-	var ticksTreatment = 'glow';
-
-	var xAxis = new Rickshaw.Graph.Axis.Time( {
-		graph: graph,
-		ticksTreatment: ticksTreatment,
-		timeFixture: new Rickshaw.Fixtures.Time.Local()
-	} );
-
-	xAxis.render();
-
-	var yAxis = new Rickshaw.Graph.Axis.Y( {
-		graph: graph,
-		tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-		ticksTreatment: ticksTreatment
-	} );
-
-	yAxis.render();
-
-	var controls = new RenderControls( {
-		element: document.querySelector('form'),
-		graph: graph
-	} );
-
-
-	var previewXAxis = new Rickshaw.Graph.Axis.Time({
-		graph: preview.previews[0],
-		timeFixture: new Rickshaw.Fixtures.Time.Local(),
-		ticksTreatment: ticksTreatment
-	});
-
-	previewXAxis.render();
-	
-};
-
-
-jQuery.ajax({
-	url: 'http://web-dev.ci-connect.net/~erikhalperin/site-map.wsgi?hours=600',
-	dataType: 'jsonp',
-	success: datahandler,
-});
-
+preload();
 
 </script>
 

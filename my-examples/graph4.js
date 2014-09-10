@@ -1,12 +1,3 @@
-var spinner = $("#spinner").spinner({
-	spin: function(event, ui) {
-	    if(ui.value < 0) {
-		$(this).spinner("value", 0);
-		return false;
-	    }
-	}
-    });
-
 
 // makes call to wsgi, which returns array of all sites, users, projects 
 // on success, calls fillMenu
@@ -20,6 +11,7 @@ function preload() {
 
 // fills in dropdown menu with data from ajax call in preload() function
 var fillMenu = function(data) {
+	
 	// assigns data to global var 'choices'
 	window.choices = data;
 	
@@ -54,7 +46,7 @@ function getData() {
 		
 		var url = 'http://web-dev.ci-connect.net/~erikhalperin/JobAnalysis/data-entries.wsgi?';
 		if ($('#idUserSelect').val() == 'ALL' && $('#idProjectSelect').val() == 'ALL') {
-			url += ';hours=' + $('#spinner').val() + ';bin=10;';
+			url += ';hours=' + $('#spinner').val() + ';bin=' + parseInt($('#spinner').val() * 60 / 15);
 			return url;
 		}
 		else if ($('#idUserSelect').val() == 'ALL') {
@@ -70,7 +62,7 @@ function getData() {
 		}
 		
 		url += ';hours=' + $('#spinner').val();
-		url += ';bin=10;';
+		url += ';bin=' + parseInt($('#spinner').val() * 60 / 15);
 		return url;
 	}
 	
@@ -95,34 +87,33 @@ var showData = function(data) {
 			cs.push(t);
 		}
 	}
-	cs.sort(function(a,b){return a-b});
-
-	// convert Unix timestamp to local time
-	var options = {
-		weekday: "short",
-		month: "short",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		hour12: true,
-	}
+	cs.sort(function(a,b) {return a-b} );
+	
+	// console.log(cs);
 	
 	var convert = [];
 	for (i in cs) {
-		var date = new Date(cs[i] * 1000);
-		date.toLocaleTimeString("en-us", options);
+		var date = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', cs[i]*1000);
 		convert.push(date);
 	}
-	console.log(convert);
-
+	// console.log(convert);
 
  	// chart options
 	var options = {
     			chart : {
     				renderTo : 'graphspace', zoomType : 'xy',
     				type : 'area', height : 600, margin : [ 60, 30, 45, 70 ],
-					marginBottom: 180,
+					marginBottom: 220,
+				    panning: true,
+				    panKey: 'shift'
     			},	
+				tooltip: {
+					formatter: function() {
+						return '<b>' + this.series.name + '</b><br>' +
+						'Timestamp: <b>' + this.x + '<br>' +
+						'</b>Number of Jobs: <b>'  + this.y + '</b>';
+					}
+				},
 				noData: {
 				    	style: {
 				        	fontWeight: 'bold',
@@ -135,28 +126,31 @@ var showData = function(data) {
                 		stacking: 'normal',
                		 	lineColor: '#666666',
                	  		lineWidth: 1,
-                		marker: {
-                    		lineWidth: 1,
-                    		lineColor: '#666666'
-                		}
+                		marker: { enabled: false },
+						dataLabels: { enabled: false },
             		}
 				},		
     			title : { 
 					text : 'Job Chart',
 				},
 				subtitle: {
-				   	text: 'User: ' + $('#idUserSelect').val() + '  |  Project: ' + $('#idProjectSelect').val()
+				   	text: 'Site: ' + $('#idSiteSelect').val() + '   |   User: ' + $('#idUserSelect').val() + '  |  Project: ' + $('#idProjectSelect').val()
 				},		
     			xAxis : {  
 					categories: convert,
-					type : 'datetime', 
+					labels: {
+					 	overflow: 'justify',
+						rotation: -45
+					},
+					//type : 'datetime', 
 					tickWidth : 0, 
 					gridLineWidth : 1, 
-					title : { text : 'Timestamp' } 
+					align: 'left',
+					title : { text : 'Timestamp' },
 				},	
     			yAxis : { 
 					title : { text : 'Number of Jobs' },
-					labels: { formatter: function () { return this.value / 5 ; } } 
+					labels: { formatter: function () { return this.value ; } } 
 				},	
     			legend : { align: 'center', verticalAlign: 'bottom', floating: true, itemMarginBottom: 5},
     			exporting: { buttons: { contextButton: {  text: 'Export' } }, sourceHeight: 1050, sourceWidth: 1485 },
@@ -164,52 +158,137 @@ var showData = function(data) {
     	};
 
 
-		
+		console.log(data);
 		// creates array of unique sites
 		var S = [];
 		for (i in data) {
 			var n = data[i][2];
 			// n+1 bc want to make sure 'ALL' is not included
 			var k = choices.sites[n+1];
-			if (S.indexOf(k) == -1) {
+			if ( S.indexOf(k) == -1 && k != 'ALL') {
 				S.push(k);
 			}		
 		}
+		// console.log(S);
 		
-		/*
 		// creates array of unique users
-		var Us = [];
+		var U = [];
 		for (i in data) {
-			var n = data[i][1];
+			var n = data[i][0];
+			// n+1 bc want to make sure 'ALL' is not included
 			var k = choices.users[n+1];
-			if (Us.indexOf(k) == -1) {
-				Us.push(k);
-			}
-		} */
+			if ( U.indexOf(k)==-1 && k!='ALL') {
+				U.push(k);
+			}		
+		}
+		console.log(U);
 		
-		// creates array of number of jobs running at each timestamp
-		var TS = [];
-		for (i in cs) {
-			var TSa = [];
-			for (j in data) {
-				if (data[j][3]==cs[i]) {
-					TSa.push(data[j][4]);
-				}
+		// creates array of unique projects
+		var P = [];
+		for (i in data) {
+			var n = data[i][0];
+			// n+1 bc want to make sure 'ALL' is not included
+			var k = choices.projects[n+1];
+			if ( P.indexOf(k)==-1 && k!='ALL') {
+				P.push(k);
 			}
-			TS.push(TSa);
+		}
+		
+		
+		if ($('.dropdown').val().match("Site")) {
+			var TS = []; // length=number of sites
+			for (i in S) {
+				var TSa = [];
+				for (j in cs) {
+					var total = 0;
+					for (k in data) {
+						var n = data[k][2];
+						if (data[k][3]==cs[j] && choices.sites[n]==S[i]) {
+							total += data[k][4];
+						}
+					}
+					TSa.push(total);
+				}
+				TS.push(TSa);
+			}
+		}
+
+		
+		if ($('.dropdown').val().match("User")) {
+			var TS = []; 
+			for (i in U) {
+				var TSa = [];
+				for (j in cs) {
+					var total = 0;
+					for (k in data) {
+						var n = data[k][0];
+						if (data[k][3]==cs[j] && choices.users[n]==U[i]) {
+							total += data[k][4];
+						}
+					}
+					TSa.push(total);
+				}
+				TS.push(TSa);
+			}
+		}
+		
+		if ($('.dropdown').val().match("Project")) {
+			var TS = []; 
+			for (i in P) {
+				var TSa = [];
+				for (j in cs) {
+					var total = 0;
+					for (k in data) {
+						var n = data[k][1];
+						if (data[k][3]==cs[j] && choices.projects[n]==P[i]) {
+							total += data[k][4];
+						}
+					}
+					TSa.push(total);
+				}
+				TS.push(TSa);
+			}
 		}
 	
-		// creates data series from arrays
-		var sd = [];
-		for (i in S) {
-			sd.push({ 'name': S[i], 'data': TS[i] })
+		// console.log(TS);
+	
+		// if user selects sort by site
+		if ($('.dropdown').val().match("Site")) {
+			var sd = [];
+			for (i in S) {
+				sd.push({ 'name': S[i], 'data': TS[i] });
+			}
 		}
 		
+		var Ua = [];
+		for (i in U) {
+			var str = U[i];
+			str = str.replace('@login01.osgconnect.net',"") 
+			Ua.push(str);
+		};
+		// if user selects sort by user
+		if ($('.dropdown').val().match("User")) {
+			var sd = [];
+			for (i in Ua) {
+				sd.push({ 'name': Ua[i], 'data': TS[i] });
+			}
+		}
+		
+		// if user selects sort by project
+		if ($('.dropdown').val().match("Project")) {
+			var sd = [];
+			for (i in P) {
+				sd.push({ 'name': P[i], 'data': TS[i] });
+			}
+		}
+		
+		// console.log(sd);
 		options.series=sd;
 
 		// create chart
 		
    		chart = new Highcharts.Chart(options);
+		//chart.redraw();
 		
 }
 

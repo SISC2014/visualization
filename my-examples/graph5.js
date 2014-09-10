@@ -1,12 +1,3 @@
-var spinner = $("#spinner").spinner({
-	spin: function(event, ui) {
-	    if(ui.value < 0) {
-		$(this).spinner("value", 0);
-		return false;
-	    }
-	}
-    });
-
 
 // makes call to wsgi, which returns array of all sites, users, projects 
 // on success, calls fillMenu
@@ -53,24 +44,8 @@ function getData() {
 	function makeURL() {
 		
 		var url = 'http://web-dev.ci-connect.net/~erikhalperin/JobAnalysis/data-entries.wsgi?';
-		if ($('#idUserSelect').val() == 'ALL' && $('#idProjectSelect').val() == 'ALL') {
-			url += ';hours=' + $('#spinner').val() + ';bin=10;';
-			return url;
-		}
-		else if ($('#idUserSelect').val() == 'ALL') {
-			url += 'project=' + $('#idProjectSelect').val();
-		}
-		else if ($('#idProjectSelect').val() == 'ALL') {
-			url += 'user=' + $('#idUserSelect').val() + '@login01.osgconnect.net';
-		}
-		
-		else {	
-			url += 'user=' + $('#idUserSelect').val() + '@login01.osgconnect.net';
-			url += ';project=' + $('#idProjectSelect').val();
-		}
-		
-		url += ';hours=' + $('#spinner').val();
-		url += ';bin=10;';
+		url += 'hours=' + $('#spinner').val();
+		url += ';bin=' + parseInt($('#spinner').val() /o 15);
 		return url;
 	}
 	
@@ -96,21 +71,10 @@ var showData = function(data) {
 		}
 	}
 	cs.sort(function(a,b){return a-b});
-
-	// convert Unix timestamp to local time
-	var options = {
-		weekday: "short",
-		month: "short",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		hour12: true,
-	}
 	
 	var convert = [];
 	for (i in cs) {
-		var date = new Date(cs[i] * 1000);
-		date.toLocaleTimeString("en-us", options);
+		var date = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', cs[i]*1000);
 		convert.push(date);
 	}
 	console.log(convert);
@@ -118,49 +82,55 @@ var showData = function(data) {
 
  	// chart options
 	var options = {
-    			chart : {
-    				renderTo : 'graphspace', zoomType : 'xy',
-    				type : 'area', height : 600, margin : [ 60, 30, 45, 70 ],
-					marginBottom: 180,
-    			},	
-				noData: {
-				    	style: {
-				        	fontWeight: 'bold',
-				            fontSize: '15px',
-				           	color: '#303030'
-				        }
-				},		
-    			plotOptions: { 
-					area: {
-                		stacking: 'normal',
-               		 	lineColor: '#666666',
-               	  		lineWidth: 1,
-                		marker: {
-                    		lineWidth: 1,
-                    		lineColor: '#666666'
-                		}
-            		}
-				},		
-    			title : { 
-					text : 'Job Chart',
-				},
-				subtitle: {
-				   	text: 'User: ' + $('#idUserSelect').val() + '  |  Project: ' + $('#idProjectSelect').val()
-				},		
-    			xAxis : {  
-					categories: convert,
-					type : 'datetime', 
-					tickWidth : 0, 
-					gridLineWidth : 1, 
-					title : { text : 'Timestamp' } 
-				},	
-    			yAxis : { 
-					title : { text : 'Number of Jobs' },
-					labels: { formatter: function () { return this.value / 5 ; } } 
-				},	
-    			legend : { align: 'center', verticalAlign: 'bottom', floating: true, itemMarginBottom: 5},
-    			exporting: { buttons: { contextButton: {  text: 'Export' } }, sourceHeight: 1050, sourceWidth: 1485 },
-    			credits: { enabled: false }
+		chart : {
+			renderTo : 'graphspace', zoomType : 'xy',
+			type : 'area', height : 600, margin : [ 60, 30, 45, 70 ],
+			marginBottom: 180,
+		    panning: true,
+		    panKey: 'shift',
+		},	
+		// tooltip: { enabled: false },
+		noData: {
+		    	style: {
+		        	fontWeight: 'bold',
+		            fontSize: '15px',
+		           	color: '#303030'
+		        }
+		},		
+		plotOptions: { 
+			area: {
+        		stacking: 'normal',
+       		 	lineColor: '#666666',
+       	  		lineWidth: 1,
+        		marker: { enabled: false },
+				//dataLabels: { enabled: false },
+    		}
+		},		
+		title : { 
+			text : 'Job Chart',
+		},		
+		subtitle: {
+		   	text: 'User: ' + $('#idUserSelect').val() + '  |  Project: ' + $('#idProjectSelect').val()
+		},	
+		xAxis : {  
+			categories: convert,
+			labels: {
+			 	overflow: 'justify',
+				staggerLines: 2
+			},
+			type : 'datetime', 
+			tickWidth : 0, 
+			gridLineWidth : 1, 
+			align: 'left',
+			title : { text : 'Timestamp' } 
+		},	
+		yAxis : { 
+			title : { text : 'Number of Jobs' },
+			labels: { formatter: function () { return this.value ; } } 
+		},	
+		legend : { align: 'center', verticalAlign: 'bottom', floating: true, itemMarginBottom: 5},
+		exporting: { buttons: { contextButton: {  text: 'Export' } }, sourceHeight: 1050, sourceWidth: 1485 },
+		credits: { enabled: false }
     	};
 
 
@@ -199,10 +169,20 @@ var showData = function(data) {
 			TS.push(TSa);
 		}
 	
-		// creates data series from arrays
-		var sd = [];
-		for (i in S) {
-			sd.push({ 'name': S[i], 'data': TS[i] })
+		if ($(this).val().match("Site")) {
+			// creates data series from arrays
+			var sd = [];
+			for (i in S) {
+				sd.push({ 'name': S[i], 'data': TS[i] });
+			}
+		}
+		
+		if ($(this).val().match("User")) {
+			// creates data series from arrays
+			var sd = [];
+			for (i in P) {
+				sd.push({ 'name': P[i], 'data': TS[i] });
+			}
 		}
 		
 		options.series=sd;
@@ -210,6 +190,7 @@ var showData = function(data) {
 		// create chart
 		
    		chart = new Highcharts.Chart(options);
+		//chart.redraw();
 		
 }
 
